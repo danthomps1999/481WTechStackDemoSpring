@@ -1,6 +1,8 @@
 package com.example.demo;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +19,19 @@ public class UsersController {
 
 	@GetMapping(path = "/")
 	public ArrayList<String> getUserNames() {
-		return usersDAO.getUserNames();
+		try {
+			return usersDAO.getUserNames();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@PostMapping(path = "/")
