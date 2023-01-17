@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,22 +22,28 @@ import com.google.firebase.cloud.FirestoreClient;
 @Repository
 public class UsersDAO {
 	public static ArrayList<String> userNames = new ArrayList<String>();
+	public static Firestore db;
 
 	static {
 		userNames.add("Testing T. Testerston the Third");
+
+		FileInputStream serviceAccount;
+		try {
+			serviceAccount = new FileInputStream("./bin/firebaseLogin/serviceAccountKey.json");
+			FirebaseOptions options;
+			options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(serviceAccount)).build();
+			FirebaseApp.initializeApp(options);
+			db = FirestoreClient.getFirestore();
+			DocumentReference docRef = db.collection("demo").document("Users");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public ArrayList<String> getUserNames() throws IOException, InterruptedException, ExecutionException {
-		FileInputStream serviceAccount = new FileInputStream("./bin/firebaseLogin/serviceAccountKey.json");
-		FirebaseOptions options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(serviceAccount))
-				.build();
-		FirebaseApp.initializeApp(options);
-		Firestore db = FirestoreClient.getFirestore();
-		DocumentReference docRef = db.collection("demo").document("Users");
 		ApiFuture<QuerySnapshot> query = db.collection("demo").get();
 		QuerySnapshot querySnapshot = query.get();
-
-//		return userNames;
 		List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
 		ArrayList<String> userNames = new ArrayList<String>();
 		for (QueryDocumentSnapshot document : documents) {

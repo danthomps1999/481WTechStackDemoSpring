@@ -67,7 +67,14 @@ public class TestMain {
 		for (QueryDocumentSnapshot document : documents) {
 			System.out.println(document.get("Users").toString());
 		}
-
+		List<QueryDocumentSnapshot> documents2 = querySnapshot.getDocuments();
+		for (QueryDocumentSnapshot document : documents) {
+			System.out.println(document.get("Users").toString());
+		}
+		List<QueryDocumentSnapshot> documents3 = querySnapshot.getDocuments();
+		for (QueryDocumentSnapshot document : documents) {
+			System.out.println(document.get("Users").toString());
+		}
 	}
 
 }
