@@ -1,4 +1,4 @@
-package SpringFuntionsDemo;
+package com.example.demo;
 
 import java.util.ArrayList;
 
@@ -15,12 +15,12 @@ public class UsersController {
 	@Autowired
 	private UsersDAO usersDAO;
 
-	@GetMapping(path = "/", produces = "application/json")
+	@GetMapping(path = "/")
 	public ArrayList<String> getUserNames() {
 		return usersDAO.getUserNames();
 	}
 
-	@PostMapping(path = "/", consumes = "application/json", produces = "application.json")
+	@PostMapping(path = "/")
 	public void addUserName(@RequestBody String string) {
 		usersDAO.addUserName(string);
 	}
