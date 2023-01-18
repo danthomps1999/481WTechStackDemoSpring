@@ -4,7 +4,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.springframework.stereotype.Repository;
@@ -15,6 +17,7 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
+import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
@@ -23,6 +26,7 @@ import com.google.firebase.cloud.FirestoreClient;
 public class UsersDAO {
 	public static ArrayList<String> userNames = new ArrayList<String>();
 	public static Firestore db;
+	public static DocumentReference docRef;
 
 	static {
 		userNames.add("Testing T. Testerston the Third");
@@ -34,7 +38,7 @@ public class UsersDAO {
 			options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(serviceAccount)).build();
 			FirebaseApp.initializeApp(options);
 			db = FirestoreClient.getFirestore();
-			DocumentReference docRef = db.collection("demo").document("Users");
+			docRef = db.collection("demo").document("Users");
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -47,12 +51,37 @@ public class UsersDAO {
 		List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
 		ArrayList<String> userNames = new ArrayList<String>();
 		for (QueryDocumentSnapshot document : documents) {
-			userNames.add(document.get("Users").toString());
+			userNames = (ArrayList<String>) (document.get("Users"));
 		}
 		return userNames;
 	}
 
 	public void addUserName(String userName) {
-		userNames.add(userName);
+		try {
+			ArrayList<String> currentUserNames = this.getUserNames();
+
+			ApiFuture<QuerySnapshot> query = db.collection("demo").get();
+			QuerySnapshot querySnapshot = query.get();
+			List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+			for (QueryDocumentSnapshot document : documents) {
+				currentUserNames = (ArrayList<String>) document.get("Users");
+			}
+			currentUserNames.add(userName);
+
+			Map<String, Object> testingMap = new HashMap<>();
+			testingMap.put("Users", currentUserNames);
+
+			ApiFuture<WriteResult> result = docRef.set(testingMap);
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
