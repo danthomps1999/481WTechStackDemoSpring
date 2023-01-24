@@ -1,8 +1,8 @@
 package com.example.demo;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,9 +31,17 @@ public class UsersDAO {
 	static {
 		userNames.add("Testing T. Testerston the Third");
 
-		FileInputStream serviceAccount;
+//		FileInputStream serviceAccount;
 		try {
-			serviceAccount = new FileInputStream("./bin/firebaseLogin/serviceAccountKey.json");
+			
+		    ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+		    InputStream serviceAccount = classloader.getResourceAsStream("serviceAccountKey.json");
+
+			
+//			serviceAccount = new FileInputStream("./src/main/resources/serviceAccountKey.json");
+			
+
+//			serviceAccount = new FileInputStream("./bin/firebaseLogin/serviceAccountKey.json");
 			FirebaseOptions options;
 			options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(serviceAccount)).build();
 			FirebaseApp.initializeApp(options);
